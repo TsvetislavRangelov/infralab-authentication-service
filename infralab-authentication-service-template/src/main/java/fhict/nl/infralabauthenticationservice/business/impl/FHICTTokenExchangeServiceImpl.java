@@ -22,7 +22,6 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
         WebClient client = WebClient.create();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
-
         params.add("grant_type", "authorization_code");
         params.add("code", code);
         params.add("redirect_uri", REDIRECT_URI);

@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class InfralabCertificate {
     //adding the certificate data here later
 }

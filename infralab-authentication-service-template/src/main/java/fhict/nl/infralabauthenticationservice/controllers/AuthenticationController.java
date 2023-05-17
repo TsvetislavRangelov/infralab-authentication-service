@@ -23,6 +23,7 @@ public class AuthenticationController {
     @GetMapping
     public ResponseEntity<String> authorize(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         String token = exchangeService.exchangeCodeForToken(code);
+        System.out.println(token);
         response.addHeader("authorization", token);
         response.sendRedirect("http://localhost:3000/");
         return ResponseEntity.ok(token);
