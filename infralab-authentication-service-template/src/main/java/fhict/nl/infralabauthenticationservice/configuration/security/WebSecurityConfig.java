@@ -7,6 +7,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 public class WebSecurityConfig {
 
+
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         //turning off login form and reverting back to http for redirect url
         httpSecurity

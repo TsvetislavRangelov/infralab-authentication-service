@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/certificate")
+@RequestMapping("/certificates")
 @RequiredArgsConstructor
 public class CertificateController {
     //The client application initiates the flow by directing the resource owner to the authentication server (identity.fhict.nl).
