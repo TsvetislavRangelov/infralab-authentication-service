@@ -30,7 +30,7 @@ public class CertificateController {
         //this is where we request the certificate after we exchange the auth code for a token
 
         System.out.println("shoot");
-        Certificate response = certificateService.getCertificate("Test certificate");
+        String response = certificateService.getCertificate("Test certificate");
         System.out.println(response);
 
         return ResponseEntity.ok().body(response);

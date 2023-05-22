@@ -8,7 +8,6 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class CertificateServiceImpl implements CertificateService{
     }
 
     @Override
-    public Certificate getCertificate (String name) throws SSLException, JSONException {
+    public  String getCertificate (String name) throws SSLException, JSONException {
         String endpoint = "https://172.16.1.1/api/v1/system/certificate";
         WebClient client = createWebClient();
 
@@ -47,15 +46,28 @@ public class CertificateServiceImpl implements CertificateService{
                 .bodyToMono(String.class)
                 .block();
 
-        //Convert response to JSON Object
-        JSONObject response = new JSONObject(certificates);
-        //get only the certificates from the response
-        JSONArray jsonArray = response.getJSONArray("data");
+        //Temporary way of getting the cert
+        int start =certificates.indexOf(name);
+        String startString = certificates.substring(start);
+        int end = startString.indexOf("}");
+        String finalString = startString.substring(0,end);
+        int crtStart = finalString.indexOf("crt");
+        String crtStartString = finalString.substring(crtStart+5);
+        int crtEnd = crtStartString.indexOf(",");
+        return crtStartString.substring(0,crtEnd);
 
-        JSONArray secondArray = new JSONObject(jsonArray.toString()).getJSONArray("cert");
-        System.out.println(secondArray);
 
-        return filterCertificate(name, secondArray);
+
+
+//        //Convert response to JSON Object
+//        JSONObject response = new JSONObject(certificates);
+//        //get only the certificates from the response
+//        JSONArray jsonArray = response.getJSONArray("data");
+//
+//        JSONArray secondArray = new JSONObject(jsonArray.toString()).getJSONArray("cert");
+//        System.out.println(secondArray);
+//
+//        return filterCertificate(name, secondArray);
     }
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
