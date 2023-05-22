@@ -52,7 +52,9 @@ public class CertificateServiceImpl implements CertificateService{
         //get only the certificates from the response
         JSONArray jsonArray = response.getJSONArray("data");
 
-        return filterCertificate(name, jsonArray);
+        JSONArray secondArray = jsonArray.getJSONArray(0);
+
+        return filterCertificate(name, secondArray);
     }
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
