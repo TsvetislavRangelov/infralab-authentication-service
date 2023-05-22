@@ -27,9 +27,7 @@ public class CertificateServiceImpl implements CertificateService{
         } catch (Exception e) {
             checkTheOutput = e.getMessage();
         }
-
         return checkTheOutput;
-
     }
 }
 

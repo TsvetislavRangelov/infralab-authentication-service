@@ -2,7 +2,6 @@ package fhict.nl.infralabauthenticationservice.controllers;
 
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/certificates")
-@RequiredArgsConstructor
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 
