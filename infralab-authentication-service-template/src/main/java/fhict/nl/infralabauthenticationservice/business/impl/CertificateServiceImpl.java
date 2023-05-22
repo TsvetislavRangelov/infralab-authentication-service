@@ -23,7 +23,7 @@ import javax.net.ssl.SSLException;
 public class CertificateServiceImpl implements CertificateService{
 
     //Web client to bypass ssl verification
-    public WebClient createWebClient() throws SSLException {
+    public WebClient createWebClient () throws SSLException {
         SslContext sslContext = SslContextBuilder
                 .forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
@@ -39,28 +39,29 @@ public class CertificateServiceImpl implements CertificateService{
 
         //sends request to pfSense
         String certificates = client.get()
-                    .uri(endpoint)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "61646d696e 8904905528bec8d123b7a6d502a4b3ae")
-                    .header("Content-Type", "application/json")
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+                .uri(endpoint)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "61646d696e 8904905528bec8d123b7a6d502a4b3ae")
+                .header("Content-Type", "application/json")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
         //Convert response to JSON Object
-        JSONObject response= new JSONObject(certificates);
+        JSONObject response = new JSONObject(certificates);
         //get only the certificates from the response
         JSONArray jsonArray = response.getJSONArray("data");
 
-        JSONArray secondArray = jsonArray.getJSONArray(0);
+        JSONArray secondArray = new JSONObject(jsonArray.toString()).getJSONArray("cert");
+        System.out.println(secondArray);
 
         return filterCertificate(name, secondArray);
     }
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
         //should find a better way to do it
-        for (int i=0; i<jsonArray.length(); i++){
-            if(jsonArray.getJSONObject(i).getString("descr") == name){
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (jsonArray.getJSONObject(i).getString("descr") == name) {
                 //will probably only need the crt, if so return as string.
                 return Certificate.builder().
                         caref(Long.parseLong(jsonArray.getJSONObject(i).getString("caref")))
