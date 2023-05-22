@@ -25,11 +25,13 @@ public class AuthenticationController {
     @GetMapping
     public ResponseEntity<String> authorize(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         //Check if the thing works:
+        System.out.println("shoot");
         System.out.println(certificateService.getCertificates());
-        String token = exchangeService.exchangeCodeForToken(code);
-        System.out.println(token);
-        response.addHeader("authorization", token);
-        response.sendRedirect("http://localhost:3000/");
-        return ResponseEntity.ok(token);
+//        String token = exchangeService.exchangeCodeForToken(code);
+//        System.out.println(token);
+//        response.addHeader("authorization", token);
+//        response.sendRedirect("http://localhost:3000/");
+//        return ResponseEntity.ok(token);
+        return ResponseEntity.ok("k");
     }
 }
