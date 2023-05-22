@@ -1,7 +1,9 @@
 package fhict.nl.infralabauthenticationservice.controllers;
 
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
+import fhict.nl.infralabauthenticationservice.domain.Certificate;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +26,14 @@ public class CertificateController {
     //The client application shows the authentication server the authorization code and the authentication server returns an access token
     //The client application can now access the resource server (api.fhict.nl) with the access token
     @GetMapping
-    public ResponseEntity<Object> getCertificateForStudent() throws SSLException {
-        System.out.println("shoot");
-        System.out.println(certificateService.getCertificates());
-
+    public ResponseEntity<Object> getCertificateForStudent() throws SSLException, JSONException {
         //this is where we request the certificate after we exchange the auth code for a token
-        return ResponseEntity.ok().body(null);
+
+        System.out.println("shoot");
+        Certificate response = certificateService.getCertificate("Test certificate");
+        System.out.println(response);
+
+        return ResponseEntity.ok().body(response);
     }
 
 }
