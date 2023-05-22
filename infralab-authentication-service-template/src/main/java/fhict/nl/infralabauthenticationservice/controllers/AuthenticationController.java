@@ -20,18 +20,13 @@ import java.io.IOException;
 @AllArgsConstructor
 public class AuthenticationController {
     private FHICTTokenExchangeService exchangeService;
-    private CertificateService certificateService;
 
     @GetMapping
     public ResponseEntity<String> authorize(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
-        //Check if the thing works:
-        System.out.println("shoot");
-        System.out.println(certificateService.getCertificates());
-//        String token = exchangeService.exchangeCodeForToken(code);
-//        System.out.println(token);
-//        response.addHeader("authorization", token);
-//        response.sendRedirect("http://localhost:3000/");
-//        return ResponseEntity.ok(token);
-        return ResponseEntity.ok("k");
+        String token = exchangeService.exchangeCodeForToken(code);
+        System.out.println(token);
+        response.addHeader("authorization", token);
+        response.sendRedirect("http://localhost:3000/");
+        return ResponseEntity.ok(token);
     }
 }
