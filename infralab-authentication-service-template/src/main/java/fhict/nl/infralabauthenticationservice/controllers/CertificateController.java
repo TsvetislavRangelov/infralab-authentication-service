@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.net.ssl.SSLException;
+
 @RestController
 @RequestMapping("/certificates")
 @AllArgsConstructor
@@ -22,7 +24,7 @@ public class CertificateController {
     //The client application shows the authentication server the authorization code and the authentication server returns an access token
     //The client application can now access the resource server (api.fhict.nl) with the access token
     @GetMapping
-    public ResponseEntity<Object> getCertificateForStudent(){
+    public ResponseEntity<Object> getCertificateForStudent() throws SSLException {
         System.out.println("shoot");
         System.out.println(certificateService.getCertificates());
 
