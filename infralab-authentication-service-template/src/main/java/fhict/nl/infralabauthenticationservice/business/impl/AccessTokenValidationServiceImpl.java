@@ -15,7 +15,7 @@ public class AccessTokenValidationServiceImpl implements AccessTokenValidationSe
     public String validateToken (String token) {
         //Will be fixed later
         int token1 = token.indexOf("access_token");
-        String beginning = token.substring(token1+16);
+        String beginning = token.substring(token1+15);
         int token2 = beginning.indexOf(",");
         String end = beginning.substring(0, token2-1);
 
