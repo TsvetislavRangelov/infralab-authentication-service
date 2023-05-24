@@ -32,7 +32,7 @@ public class CertificateServiceImpl implements CertificateService{
     }
 
     @Override
-    public  String getCertificate (String name) throws SSLException, JSONException {
+    public  String getCertificate (String name) throws SSLException {
         String endpoint = "https://172.16.1.1/api/v1/system/certificate";
         WebClient client = createWebClient();
 
