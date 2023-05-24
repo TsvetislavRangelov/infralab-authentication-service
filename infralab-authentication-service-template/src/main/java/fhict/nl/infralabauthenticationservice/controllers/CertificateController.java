@@ -27,13 +27,8 @@ public class CertificateController {
     //The client application can now access the resource server (api.fhict.nl) with the access token
     @GetMapping
     public ResponseEntity<Object> getCertificateForStudent() throws SSLException, JSONException {
-        //this is where we request the certificate after we exchange the auth code for a token
-
-        System.out.println("shoot");
-        String response = certificateService.getCertificate("Test certificate");
-        System.out.println(response);
-
+        //the input comes after checking the corresponding certificate to the authenticated user from the db
+        Certificate response = certificateService.getCertificate("Test certificate");
         return ResponseEntity.ok().body(response);
     }
-
 }

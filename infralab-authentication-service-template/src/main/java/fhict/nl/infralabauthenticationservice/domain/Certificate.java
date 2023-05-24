@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Certificate{
-    private long refid;
+    private String refid;
     private String descr;
     private String type;
-    private long caref;
+    private String caref;
     private String crt;
     private String prv;
 
