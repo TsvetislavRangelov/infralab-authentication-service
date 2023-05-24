@@ -27,7 +27,8 @@ public class AuthenticationController{
         // If the response is 200 = redirect to localhost and save the claims,
         // If 400 - token was not validated =  show error page
         try {
-            accessTokenValidationService.validateToken(token);
+            String validated = accessTokenValidationService.validateToken(token);
+            System.out.println(validated);
             response.addHeader("authorization", token);
             response.sendRedirect("http://localhost:3000/");
             return ResponseEntity.ok(token);
