@@ -35,6 +35,7 @@ public class AuthenticationController{
             //if teacher
             //response.sendRedirect("http://localhost:3000/admin");
             //response.sendRedirect("http://localhost:3000/certificates");
+            //hey
             return ResponseEntity.ok().build();
         } catch (WebClientResponseException e) {
             return ResponseEntity.badRequest().build();
