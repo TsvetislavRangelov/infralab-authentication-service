@@ -16,7 +16,6 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
     private static final String REDIRECT_URI = "https://localhost:8080/";
     private static final String CLIENT_ID = "i476232-infralabau";
 
-
     @Override
     public String exchangeCodeForToken(String code) {
         String tokenEndpoint = "https://identity.fhict.nl/connect/token";
@@ -29,6 +28,7 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
         params.add("client_id", CLIENT_ID);
         params.add("client_secret", System.getenv("INFRALAB_CLIENT_SECRET"));
 
+        System.out.println(System.getenv("INFRALAB_CLIENT_SECRET"));
         return client.post()
                 .uri(tokenEndpoint)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
