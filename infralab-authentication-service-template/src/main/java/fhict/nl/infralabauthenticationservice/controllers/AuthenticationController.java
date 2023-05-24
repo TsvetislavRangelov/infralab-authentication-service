@@ -20,20 +20,25 @@ public class AuthenticationController{
     private AccessTokenValidationService accessTokenValidationService;
 
     @GetMapping
-    public ResponseEntity<String> authorize (@RequestParam("code") String code, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Void> authorize (@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         String token = exchangeService.exchangeCodeForToken(code);
         System.out.println(token);
 
         // If the response is 200 = redirect to localhost and save the claims,
         // If 400 - token was not validated =  show error page
         try {
-            String validated = accessTokenValidationService.validateToken(token);
-            System.out.println(validated);
-            response.addHeader("authorization", token);
-            response.sendRedirect("http://localhost:3000/");
-            return ResponseEntity.ok(token);
+            String claimsToken = accessTokenValidationService.validateToken(token);
+            //check role
+            //check email
+            //otherwise if its a student send to certificate page
+
+            //if teacher
+            //response.sendRedirect("http://localhost:3000/admin");
+            //response.sendRedirect("http://localhost:3000/certificates");
+            return ResponseEntity.ok().build();
+
         } catch (WebClientResponseException e) {
-            return ResponseEntity.ok("INVALID_TOKEN");
+            return ResponseEntity.badRequest().build();
         }
     }
 }

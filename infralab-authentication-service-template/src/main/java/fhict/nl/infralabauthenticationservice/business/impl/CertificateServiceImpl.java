@@ -32,7 +32,7 @@ public class CertificateServiceImpl implements CertificateService{
     }
 
     @Override
-    public  String getCertificate (String name) throws SSLException, JSONException {
+    public  String getCertificate (String name) throws SSLException {
         String endpoint = "https://172.16.1.1/api/v1/system/certificate";
         WebClient client = createWebClient();
 
@@ -40,7 +40,7 @@ public class CertificateServiceImpl implements CertificateService{
         String certificates = client.get()
                 .uri(endpoint)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "61646d696e 8904905528bec8d123b7a6d502a4b3ae")
+                .header("Authorization", System.getenv("PFSENSE_AUTH_TOKEN"))
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .bodyToMono(String.class)
@@ -58,7 +58,9 @@ public class CertificateServiceImpl implements CertificateService{
 
 
 
-
+//        return filterCertificate(name, secondArray);
+//
+//
 //        //Convert response to JSON Object
 //        JSONObject response = new JSONObject(certificates);
 //        //get only the certificates from the response
@@ -66,14 +68,12 @@ public class CertificateServiceImpl implements CertificateService{
 //
 //        JSONArray secondArray = new JSONObject(jsonArray.toString()).getJSONArray("cert");
 //        System.out.println(secondArray);
-//
-//        return filterCertificate(name, secondArray);
     }
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
         //should find a better way to do it
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (jsonArray.getJSONObject(i).getString("descr") == name) {
+            if (jsonArray.getJSONObject(i).getString("descr").equals(name)) {
                 //will probably only need the crt, if so return as string.
                 return Certificate.builder().
                         caref(Long.parseLong(jsonArray.getJSONObject(i).getString("caref")))
