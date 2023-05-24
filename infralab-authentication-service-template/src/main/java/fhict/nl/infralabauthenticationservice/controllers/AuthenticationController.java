@@ -4,6 +4,7 @@ import fhict.nl.infralabauthenticationservice.business.services.AccessTokenValid
 import fhict.nl.infralabauthenticationservice.business.services.FHICTTokenExchangeService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ public class AuthenticationController{
     private AccessTokenValidationService accessTokenValidationService;
 
     @GetMapping
-    public ResponseEntity<Void> authorize (@RequestParam("code") String code, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Void> authorize (@RequestParam("code") String code, HttpServletResponse qresponse) throws IOException, JSONException {
         String token = exchangeService.exchangeCodeForToken(code);
         System.out.println(token);
 
@@ -28,6 +29,7 @@ public class AuthenticationController{
         // If 400 - token was not validated =  show error page
         try {
             String claimsToken = accessTokenValidationService.validateToken(token);
+            System.out.println(claimsToken);
             //check role
             //check email
             //otherwise if its a student send to certificate page

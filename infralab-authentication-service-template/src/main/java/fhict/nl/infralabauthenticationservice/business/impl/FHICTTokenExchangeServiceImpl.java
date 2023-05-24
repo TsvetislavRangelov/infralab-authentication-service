@@ -29,6 +29,7 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
         params.add("client_id", CLIENT_ID);
         params.add("client_secret", System.getenv("INFRALAB_CLIENT_SECRET"));
 
+        System.out.println(System.getenv("INFRALAB_CLIENT_SECRET"));
         return client.post()
                 .uri(tokenEndpoint)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)

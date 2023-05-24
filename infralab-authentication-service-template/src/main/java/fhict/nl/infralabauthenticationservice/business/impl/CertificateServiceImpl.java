@@ -57,10 +57,6 @@ public class CertificateServiceImpl implements CertificateService{
         return crtStartString.substring(0,crtEnd);
 
 
-
-//        return filterCertificate(name, secondArray);
-//
-//
 //        //Convert response to JSON Object
 //        JSONObject response = new JSONObject(certificates);
 //        //get only the certificates from the response
@@ -68,6 +64,8 @@ public class CertificateServiceImpl implements CertificateService{
 //
 //        JSONArray secondArray = new JSONObject(jsonArray.toString()).getJSONArray("cert");
 //        System.out.println(secondArray);
+        //        return filterCertificate(name, secondArray);
+
     }
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
