@@ -1,15 +1,21 @@
-package fhict.nl.infralabauthenticationservice.domain;
+package fhict.nl.infralabauthenticationservice.persistence.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
+@Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Certificate{
+@Table(name ="certificates")
+public class CertificateEntity{
+    @Id
     private String refid;
     private String descr;
     private String type;

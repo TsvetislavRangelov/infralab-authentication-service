@@ -1,7 +1,9 @@
 package fhict.nl.infralabauthenticationservice.business.impl;
 
+import fhict.nl.infralabauthenticationservice.business.CertificateConverter;
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
+import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -16,11 +18,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService{
+    private final CertificateRepository repository;
+
+    @Override
+    public List<Certificate> test () {
+        return repository.findAll().stream().map(CertificateConverter::convert)
+                .collect(Collectors.toList());
+    }
 
     //Web client that bypasses SSL verification
     public WebClient createWebClient () throws SSLException {
@@ -59,16 +70,18 @@ public class CertificateServiceImpl implements CertificateService{
         return result;
     }
 
+
+
+
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
         //Filter the certificates by name
         for (int i = 0; i < jsonArray.length(); i++) {
             if (jsonArray.getJSONObject(i).getString("descr").equals(name)) {
 
-                return Certificate.builder().
-                        caref(jsonArray.getJSONObject(i).getString("caref"))
-                        .crt(jsonArray.getJSONObject(i).getString("crt"))
+                return Certificate.builder()
+                        .cert(jsonArray.getJSONObject(i).getString("crt"))
                         .descr(jsonArray.getJSONObject(i).getString("descr"))
-                        .prv(jsonArray.getJSONObject(i).getString("prv"))
+                        .prvkey(jsonArray.getJSONObject(i).getString("prv"))
                         .refid(jsonArray.getJSONObject(i).getString("refid"))
                         .type(jsonArray.getJSONObject(i).getString("type"))
                         .build();
