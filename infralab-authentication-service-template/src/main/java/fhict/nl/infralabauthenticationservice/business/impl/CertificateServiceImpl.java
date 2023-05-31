@@ -1,5 +1,6 @@
 package fhict.nl.infralabauthenticationservice.business.impl;
 
+import fhict.nl.infralabauthenticationservice.business.CertificateConverter;
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
 import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
@@ -17,6 +18,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -25,8 +28,9 @@ public class CertificateServiceImpl implements CertificateService{
     private final CertificateRepository repository;
 
     @Override
-    public void test () {
-        System.out.println(repository.findAll());
+    public List<Certificate> test () {
+        return repository.findAll().stream().map(CertificateConverter::convert)
+                .collect(Collectors.toList());
     }
 
     //Web client that bypasses SSL verification
@@ -74,11 +78,10 @@ public class CertificateServiceImpl implements CertificateService{
         for (int i = 0; i < jsonArray.length(); i++) {
             if (jsonArray.getJSONObject(i).getString("descr").equals(name)) {
 
-                return Certificate.builder().
-                        caref(jsonArray.getJSONObject(i).getString("caref"))
-                        .crt(jsonArray.getJSONObject(i).getString("crt"))
+                return Certificate.builder()
+                        .cert(jsonArray.getJSONObject(i).getString("crt"))
                         .descr(jsonArray.getJSONObject(i).getString("descr"))
-                        .prv(jsonArray.getJSONObject(i).getString("prv"))
+                        .prvkey(jsonArray.getJSONObject(i).getString("prv"))
                         .refid(jsonArray.getJSONObject(i).getString("refid"))
                         .type(jsonArray.getJSONObject(i).getString("type"))
                         .build();

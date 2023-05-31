@@ -30,6 +30,4 @@ public class CertificateController {
         Certificate response = certificateService.getCertificate("Test certificate");
         return ResponseEntity.ok().body(response);
     }
-
-
 }

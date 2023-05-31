@@ -13,8 +13,6 @@ public class Certificate{
     private String refid;
     private String descr;
     private String type;
-    private String caref;
-    private String crt;
-    private String prv;
-
+    private String cert;
+    private String prvkey;
 }
