@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Role;
@@ -48,8 +49,6 @@ public class AuthenticationController{
                     String role = authority.getAuthority();
                     // Check if the user has a specific role
                     if ("role_student".equals(role)) {
-                        Cookie cookie = new Cookie("cookie", state);
-                        response.addCookie(cookie);
                         response.sendRedirect("http://localhost:3000/certificates");
                         break;
                     } else if ("role_teacher".equals(role)){

@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -39,13 +40,17 @@ public class AuthenticationRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        final String requestTokenHeader = request.getParameter("code");
-        if (requestTokenHeader == null) {
+        String requestTokenHeader = request.getParameter("code");
+        boolean hasCodeParameter = requestTokenHeader != null;
+
+
+        if (!hasCodeParameter) {
             chain.doFilter(request, response);
             return;
         }
 
         String accessToken = exchangeService.exchangeCodeForToken(requestTokenHeader);
+        System.out.println("test");
 
         try {
             String claimsToken = accessTokenValidationService.validateToken(accessToken);
@@ -57,7 +62,6 @@ public class AuthenticationRequestFilter extends OncePerRequestFilter {
             sendAuthenticationError(response);
         }
     }
-
     private void sendAuthenticationError(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.flushBuffer();
