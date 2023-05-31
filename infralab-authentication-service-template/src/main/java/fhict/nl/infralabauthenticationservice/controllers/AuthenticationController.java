@@ -1,44 +1,52 @@
 package fhict.nl.infralabauthenticationservice.controllers;
-
-import fhict.nl.infralabauthenticationservice.business.services.AccessTokenValidationService;
-import fhict.nl.infralabauthenticationservice.business.services.FHICTTokenExchangeService;
+import fhict.nl.infralabauthenticationservice.configuration.security.isauthenticated.IsAuthenticated;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/")
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class AuthenticationController{
-    private FHICTTokenExchangeService exchangeService;
-    private AccessTokenValidationService accessTokenValidationService;
-
     @GetMapping
-    public ResponseEntity<Void> authorize (@RequestParam("code") String code, HttpServletResponse qresponse) throws IOException, JSONException {
-        String token = exchangeService.exchangeCodeForToken(code);
-        System.out.println(token);
-
+    @IsAuthenticated
+    public ResponseEntity<String> authorize (@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) throws IOException, JSONException {
         // If the response is 200 = redirect to localhost and save the claims,
         // If 400 - token was not validated =  show error page
         try {
-            String claimsToken = accessTokenValidationService.validateToken(token);
-            System.out.println(claimsToken);
-            //check role
-            //check email
-            //otherwise if its a student send to certificate page
 
-            //if teacher
-            //response.sendRedirect("http://localhost:3000/admin");
-            //response.sendRedirect("http://localhost:3000/certificates");
+            // check role
+            // teacher -> we check if the email is Peter's -> redirect to admin page
+            // student -> redirect to certificate page
+            // else -> access denied
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication != null && authentication.isAuthenticated()) {
+                for (GrantedAuthority authority : authentication.getAuthorities()) {
+                    String role = authority.getAuthority();
+                    // Check if the user has a specific role
+                    if ("role_student".equals(role)) {
+                        Cookie cookie = new Cookie("cookie", state);
+                        response.addCookie(cookie);
+                        response.sendRedirect("http://localhost:3000/certificates");
+                        break;
+                    } else if ("role_teacher".equals(role)){
+                        response.sendRedirect("http://localhost:3000/admin");
+                        break;
+                    }
+                }
+            }
             return ResponseEntity.ok().build();
-
         } catch (WebClientResponseException e) {
             return ResponseEntity.badRequest().build();
         }

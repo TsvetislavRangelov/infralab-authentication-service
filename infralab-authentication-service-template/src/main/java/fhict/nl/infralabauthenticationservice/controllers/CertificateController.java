@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.net.ssl.SSLException;
 
 @RestController
@@ -31,4 +30,6 @@ public class CertificateController {
         Certificate response = certificateService.getCertificate("Test certificate");
         return ResponseEntity.ok().body(response);
     }
+
+
 }
