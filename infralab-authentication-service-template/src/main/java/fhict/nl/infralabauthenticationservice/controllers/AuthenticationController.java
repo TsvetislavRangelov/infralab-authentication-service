@@ -1,20 +1,9 @@
 package fhict.nl.infralabauthenticationservice.controllers;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fhict.nl.infralabauthenticationservice.business.services.AccessTokenValidationService;
-import fhict.nl.infralabauthenticationservice.business.services.FHICTTokenExchangeService;
 import fhict.nl.infralabauthenticationservice.configuration.security.isauthenticated.IsAuthenticated;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.io.IOException;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/")

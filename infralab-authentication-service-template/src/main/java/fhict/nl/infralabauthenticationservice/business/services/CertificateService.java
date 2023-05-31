@@ -5,6 +5,8 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 
 import javax.net.ssl.SSLException;
 
+
 public interface CertificateService{
        Certificate getCertificate (String name) throws SSLException, JSONException;
+       void test ();
 }

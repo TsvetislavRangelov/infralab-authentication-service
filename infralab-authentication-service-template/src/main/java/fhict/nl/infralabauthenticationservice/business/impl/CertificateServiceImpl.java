@@ -2,6 +2,7 @@ package fhict.nl.infralabauthenticationservice.business.impl;
 
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
+import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -21,6 +22,12 @@ import javax.net.ssl.SSLException;
 @Service
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService{
+    private final CertificateRepository repository;
+
+    @Override
+    public void test () {
+        System.out.println(repository.findAll());
+    }
 
     //Web client that bypasses SSL verification
     public WebClient createWebClient () throws SSLException {
@@ -58,6 +65,9 @@ public class CertificateServiceImpl implements CertificateService{
 
         return result;
     }
+
+
+
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
         //Filter the certificates by name
