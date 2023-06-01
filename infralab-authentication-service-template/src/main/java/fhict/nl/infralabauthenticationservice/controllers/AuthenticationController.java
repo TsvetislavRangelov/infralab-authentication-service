@@ -30,9 +30,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 public class AuthenticationController{
+    private FHICTTokenExchangeService fhictTokenExchangeService;
+    private AccessTokenValidationService accessTokenValidationService;
     @GetMapping
-    @IsAuthenticated
-    public ResponseEntity<String> authorize (@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) throws IOException, JSONException {
+    public String authorize (@RequestParam("code") String code, HttpServletResponse response, HttpServletRequest request) throws IOException, JSONException {
         // If the response is 200 = redirect to localhost and save the claims,
         // If 400 - token was not validated =  show error page
         try {
@@ -42,24 +43,39 @@ public class AuthenticationController{
             // student -> redirect to certificate page
             // else -> access denied
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String token = fhictTokenExchangeService.exchangeCodeForToken(code);
+            String validatedToken = accessTokenValidationService.validateToken(token);
 
-            if (authentication != null && authentication.isAuthenticated()) {
-                for (GrantedAuthority authority : authentication.getAuthorities()) {
-                    String role = authority.getAuthority();
-                    // Check if the user has a specific role
-                    if ("role_student".equals(role)) {
-                        response.sendRedirect("http://localhost:3000/certificates");
-                        break;
-                    } else if ("role_teacher".equals(role)){
-                        response.sendRedirect("http://localhost:3000/admin");
-                        break;
-                    }
-                }
-            }
-            return ResponseEntity.ok().build();
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//            if (authentication != null && authentication.isAuthenticated()) {
+//                for (GrantedAuthority authority : authentication.getAuthorities()) {
+//                    String role = authority.getAuthority();
+//                    // Check if the user has a specific role
+//                    if ("role_student".equals(role)) {
+//                        response.sendRedirect("http://localhost:3000/certificates");
+//                        break;
+//                    } else if ("role_teacher".equals(role)){
+//                        response.sendRedirect("http://localhost:3000/admin");
+//                        break;
+//                    }
+//                }
+//            }
+
+            System.out.println(code);
+            response.sendRedirect("http://localhost:3000/auth/?auth=" + validatedToken);
+            return "";
         } catch (WebClientResponseException e) {
-            return ResponseEntity.badRequest().build();
+            return "xd";
         }
     }
+
+//    private final FHICTTokenExchangeService fhictTokenExchangeService;
+//
+//    @GetMapping
+//    public ResponseEntity<String> exchangeToken(@RequestParam(value = "code", required = false) String code) {
+//        // get the code and return the access token
+//        String token = fhictTokenExchangeService.exchangeCodeForToken(code);
+//        return ResponseEntity.ok(token);
+//    }
 }

@@ -25,59 +25,59 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
-public class AuthenticationRequestFilter extends OncePerRequestFilter {
-    private final static String SPRING_SECURITY_ROLE_PREFIX = "role_";
-
-    @Autowired
-    private AccessTokenDecoder accessTokenDecoder;
-
-    @Autowired
-    private FHICTTokenExchangeService exchangeService;
-
-    @Autowired
-    private AccessTokenValidationService accessTokenValidationService;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String requestTokenHeader = request.getParameter("code");
-        boolean hasCodeParameter = requestTokenHeader != null;
-
-
-        if (!hasCodeParameter) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        String accessToken = exchangeService.exchangeCodeForToken(requestTokenHeader);
-        System.out.println("test");
-
-        try {
-            String claimsToken = accessTokenValidationService.validateToken(accessToken);
-            AccessToken accessTokenDTO = accessTokenDecoder.decode(claimsToken);
-            setupSpringSecurityContext(accessTokenDTO);
-            chain.doFilter(request, response);
-        } catch (InvalidAccessTokenException | JSONException e) {
-            logger.error("Error validating access token", e);
-            sendAuthenticationError(response);
-        }
-    }
-    private void sendAuthenticationError(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.flushBuffer();
-    }
-
-    private void setupSpringSecurityContext(AccessToken accessToken) {
-        UserDetails userDetails = new User(accessToken.getSubject(), "",
-                accessToken.getRoles()
-                        .stream()
-                        .map(role -> new SimpleGrantedAuthority(SPRING_SECURITY_ROLE_PREFIX + role))
-                        .toList());
-
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        usernamePasswordAuthenticationToken.setDetails(accessToken);
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-    }
-
-}
+//@Component
+//public class AuthenticationRequestFilter extends OncePerRequestFilter {
+//    private final static String SPRING_SECURITY_ROLE_PREFIX = "role_";
+//
+//    @Autowired
+//    private AccessTokenDecoder accessTokenDecoder;
+//
+//    @Autowired
+//    private FHICTTokenExchangeService exchangeService;
+//
+//    @Autowired
+//    private AccessTokenValidationService accessTokenValidationService;
+//
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+//        String requestTokenHeader = request.getParameter("code");
+//        boolean hasCodeParameter = requestTokenHeader != null;
+//
+//
+//        if (!hasCodeParameter) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
+//
+//        String accessToken = exchangeService.exchangeCodeForToken(requestTokenHeader);
+//        System.out.println("test");
+//
+//        try {
+//            String claimsToken = accessTokenValidationService.validateToken(accessToken);
+//            AccessToken accessTokenDTO = accessTokenDecoder.decode(claimsToken);
+//            setupSpringSecurityContext(accessTokenDTO);
+//            chain.doFilter(request, response);
+//        } catch (InvalidAccessTokenException | JSONException e) {
+//            logger.error("Error validating access token", e);
+//            sendAuthenticationError(response);
+//        }
+//    }
+//    private void sendAuthenticationError(HttpServletResponse response) throws IOException {
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.flushBuffer();
+//    }
+//
+//    private void setupSpringSecurityContext(AccessToken accessToken) {
+//        UserDetails userDetails = new User(accessToken.getSubject(), "",
+//                accessToken.getRoles()
+//                        .stream()
+//                        .map(role -> new SimpleGrantedAuthority(SPRING_SECURITY_ROLE_PREFIX + role))
+//                        .toList());
+//
+//        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+//                userDetails, null, userDetails.getAuthorities());
+//        usernamePasswordAuthenticationToken.setDetails(accessToken);
+//        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+//    }
+//
+//}
