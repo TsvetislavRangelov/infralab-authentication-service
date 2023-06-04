@@ -1,13 +1,10 @@
 package fhict.nl.infralabauthenticationservice.controllers;
-import fhict.nl.infralabauthenticationservice.configuration.security.isauthenticated.IsAuthenticated;
-import jakarta.servlet.http.Cookie;
+import fhict.nl.infralabauthenticationservice.business.services.AccessTokenValidationService;
+import fhict.nl.infralabauthenticationservice.business.services.FHICTTokenExchangeService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.io.IOException;
@@ -17,9 +14,10 @@ import java.io.IOException;
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 public class AuthenticationController{
+    private FHICTTokenExchangeService fhictTokenExchangeService;
+    private AccessTokenValidationService accessTokenValidationService;
     @GetMapping
-    @IsAuthenticated
-    public ResponseEntity<String> authorize (@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) throws IOException, JSONException {
+    public String authorize (@RequestParam("code") String code, HttpServletResponse response, HttpServletRequest request) throws IOException, JSONException {
         // If the response is 200 = redirect to localhost and save the claims,
         // If 400 - token was not validated =  show error page
         try {
@@ -29,26 +27,14 @@ public class AuthenticationController{
             // student -> redirect to certificate page
             // else -> access denied
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String token = fhictTokenExchangeService.exchangeCodeForToken(code);
+            String validatedToken = accessTokenValidationService.validateToken(token);
 
-            if (authentication != null && authentication.isAuthenticated()) {
-                for (GrantedAuthority authority : authentication.getAuthorities()) {
-                    String role = authority.getAuthority();
-                    // Check if the user has a specific role
-                    if ("role_student".equals(role)) {
-                        Cookie cookie = new Cookie("cookie", state);
-                        response.addCookie(cookie);
-                        response.sendRedirect("http://localhost:3000/certificates");
-                        break;
-                    } else if ("role_teacher".equals(role)){
-                        response.sendRedirect("http://localhost:3000/admin");
-                        break;
-                    }
-                }
-            }
-            return ResponseEntity.ok().build();
+            System.out.println(code);
+            response.sendRedirect("http://localhost:3000/auth/?auth=" + validatedToken);
+            return "";
         } catch (WebClientResponseException e) {
-            return ResponseEntity.badRequest().build();
+            return "error";
         }
     }
 }
