@@ -1,13 +1,16 @@
 package fhict.nl.infralabauthenticationservice.business.impl;
 
+import fhict.nl.infralabauthenticationservice.business.CertificateConverter;
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
+import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
@@ -15,13 +18,22 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService{
+    private final CertificateRepository repository;
 
-    //Web client to bypass ssl verification
+    @Override
+    public List<Certificate> test () {
+        return repository.findAll().stream().map(CertificateConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    //Web client that bypasses SSL verification
     public WebClient createWebClient () throws SSLException {
         SslContext sslContext = SslContextBuilder
                 .forClient()
@@ -32,55 +44,45 @@ public class CertificateServiceImpl implements CertificateService{
     }
 
     @Override
-    public  String getCertificate (String name) throws SSLException {
+    public Certificate getCertificate (String name) throws SSLException, JSONException {
+
         String endpoint = "https://172.16.1.1/api/v1/system/certificate";
         WebClient client = createWebClient();
 
-        //sends request to pfSense
-        String certificates = client.get()
+        //Sends request to pfSense
+        String response = client.get()
                 .uri(endpoint)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "61646d696e 8904905528bec8d123b7a6d502a4b3ae")
+                .header("Authorization", System.getenv("PFSENSE_AUTH_TOKEN"))
                 .header("Content-Type", "application/json")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-        //Temporary way of getting the cert
-        int start =certificates.indexOf(name);
-        String startString = certificates.substring(start);
-        int end = startString.indexOf("}");
-        String finalString = startString.substring(0,end);
-        int crtStart = finalString.indexOf("crt");
-        String crtStartString = finalString.substring(crtStart+5);
-        int crtEnd = crtStartString.indexOf(",");
-        return crtStartString.substring(0,crtEnd);
+        //Convert response to JSONArray which contains only the certificates
+        JSONObject responseObject = new JSONObject(response);
+        String certificates = responseObject.optString("data");
+        JSONObject certificatesObject = new JSONObject(certificates);
+        String allCertificates = certificatesObject.optString("cert");
+        JSONArray allCertificatesArray = new JSONArray(allCertificates);
+        Certificate result = filterCertificate(name, allCertificatesArray);
 
-
-
-
-//        //Convert response to JSON Object
-//        JSONObject response = new JSONObject(certificates);
-//        //get only the certificates from the response
-//        JSONArray jsonArray = response.getJSONArray("data");
-//
-//        JSONArray secondArray = new JSONObject(jsonArray.toString()).getJSONArray("cert");
-//        System.out.println(secondArray);
-//
-//        return filterCertificate(name, secondArray);
+        return result;
     }
 
+
+
+
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
-        //should find a better way to do it
+        //Filter the certificates by name
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (jsonArray.getJSONObject(i).getString("descr") == name) {
-                //will probably only need the crt, if so return as string.
-                return Certificate.builder().
-                        caref(Long.parseLong(jsonArray.getJSONObject(i).getString("caref")))
-                        .crt(jsonArray.getJSONObject(i).getString("crt"))
+            if (jsonArray.getJSONObject(i).getString("descr").equals(name)) {
+
+                return Certificate.builder()
+                        .cert(jsonArray.getJSONObject(i).getString("crt"))
                         .descr(jsonArray.getJSONObject(i).getString("descr"))
-                        .prv(jsonArray.getJSONObject(i).getString("prv"))
-                        .refid(Long.parseLong(jsonArray.getJSONObject(i).getString("refid")))
+                        .prvkey(jsonArray.getJSONObject(i).getString("prv"))
+                        .refid(jsonArray.getJSONObject(i).getString("refid"))
                         .type(jsonArray.getJSONObject(i).getString("type"))
                         .build();
             }

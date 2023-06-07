@@ -1,6 +1,8 @@
 package fhict.nl.infralabauthenticationservice.business.impl;
 import fhict.nl.infralabauthenticationservice.business.services.AccessTokenValidationService;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -10,20 +12,18 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 @AllArgsConstructor
 public class AccessTokenValidationServiceImpl implements AccessTokenValidationService{
+    private static final String validationEndpoint = "https://identity.fhict.nl/connect/accesstokenvalidation";
 
     @Override
-    public String validateToken (String token) {
-        //Will be fixed later
-        int token1 = token.indexOf("access_token");
-        String beginning = token.substring(token1+15);
-        int token2 = beginning.indexOf(",");
-        String end = beginning.substring(0, token2-1);
+    public String validateToken (String token) throws JSONException {
+        //Get access token from input
+        JSONObject tokenObject = new JSONObject(token);
+        String accessToken = tokenObject.optString("access_token");
 
-        String validationEndpoint = "https://identity.fhict.nl/connect/accesstokenvalidation";
+        //Setup web client
         WebClient client = WebClient.create();
         MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
-        System.out.println(end);
-        param.add("token",end);
+        param.add("token",accessToken);
 
         return client.post()
                 .uri(validationEndpoint)
