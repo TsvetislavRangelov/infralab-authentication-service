@@ -31,7 +31,7 @@ public class AuthenticationController{
             String validatedToken = accessTokenValidationService.validateToken(token);
 
             System.out.println(code);
-            response.sendRedirect("http://localhost:3000/auth/?auth=" + validatedToken);
+            response.sendRedirect("https://infralab.fontysict.nl/auth/?auth=" + validatedToken);
             return "";
         } catch (WebClientResponseException e) {
             return "error";
