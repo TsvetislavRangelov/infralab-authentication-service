@@ -3,7 +3,11 @@ package fhict.nl.infralabauthenticationservice.business.impl;
 import fhict.nl.infralabauthenticationservice.business.CertificateConverter;
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
+import fhict.nl.infralabauthenticationservice.domain.OpenVPNConfig;
 import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
+import fhict.nl.infralabauthenticationservice.persistence.OpenVPNConfigRepository;
+import fhict.nl.infralabauthenticationservice.persistence.UserRepository;
+import fhict.nl.infralabauthenticationservice.persistence.entities.UserEntity;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -19,6 +23,7 @@ import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -26,11 +31,26 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService{
     private final CertificateRepository repository;
+    private final UserRepository userRepository;
 
     @Override
     public List<Certificate> test () {
         return repository.findAll().stream().map(CertificateConverter::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getCertForUser (String email) {
+        Optional<UserEntity> optional =  userRepository.findById(email);
+
+        // if no user, return nothing + show msg in front end
+        if (optional.isEmpty()){
+            return "no certificate for you";
+        }
+        //if user is here, get the corresponding cert, however, currenly there are no relations in db
+        //so it cant happen
+        //return - convertedUserEntity.certificate
+        return "You should have a certificate";
     }
 
     //Web client that bypasses SSL verification

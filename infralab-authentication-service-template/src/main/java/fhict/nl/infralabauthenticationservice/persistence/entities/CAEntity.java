@@ -1,5 +1,6 @@
 package fhict.nl.infralabauthenticationservice.persistence.entities;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -11,11 +12,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Entity
-@Table(name ="users")
+@Table(name ="ca")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity{
+
+public class CAEntity{
+
     @Id
-    private String email;
-    private String certid;
+    private String refid;
+    private String descr;
+    private String serial;
+    private String cert;
+    private String prvkey;
+    private String trust;
+    private String randomserial;
+
 }

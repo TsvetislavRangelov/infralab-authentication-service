@@ -9,7 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User{
-    private String email;
-    private String certid;
+public class CA{
+    private String refid;
+    private String descr;
+    private String serial;
+    private String cert;
+    private String prvkey;
+    private String trust;
+    private String randomserial;
 }

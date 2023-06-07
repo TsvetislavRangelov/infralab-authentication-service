@@ -5,16 +5,15 @@ import fhict.nl.infralabauthenticationservice.domain.Certificate;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import javax.net.ssl.SSLException;
 
 @RestController
 @RequestMapping("/certificates")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://infralab.fontysict.nl")
 
 public class CertificateController {
     private CertificateService certificateService;
@@ -30,4 +29,11 @@ public class CertificateController {
         Certificate response = certificateService.getCertificate("Test certificate");
         return ResponseEntity.ok().body(response);
     }
+
+    @PostMapping
+    public ResponseEntity<Object> getCertificateByStudentEmail(@Validated String email) {
+        String response = certificateService.getCertForUser(email);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
