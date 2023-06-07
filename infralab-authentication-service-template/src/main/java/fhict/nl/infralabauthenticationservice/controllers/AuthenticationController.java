@@ -22,6 +22,7 @@ public class AuthenticationController{
         // If 400 - token was not validated =  show error page
         try {
 
+
             // check role
             // teacher -> we check if the email is Peter's -> redirect to admin page
             // student -> redirect to certificate page
