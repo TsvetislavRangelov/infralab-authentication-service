@@ -31,7 +31,7 @@ public class CertificateController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> getCertificateByStudentEmail(@Validated String email) {
+    public ResponseEntity<Object> getCertificateByStudentEmail(@RequestBody String email) {
         String response = certificateService.getCertForUser(email);
         return ResponseEntity.ok().body(response);
     }
