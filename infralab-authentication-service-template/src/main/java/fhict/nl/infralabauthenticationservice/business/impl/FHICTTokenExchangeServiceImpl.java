@@ -27,7 +27,7 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
         params.add("redirect_uri", REDIRECT_URI);
         params.add("client_id", CLIENT_ID);
         params.add("client_secret", System.getenv("INFRALAB_CLIENT_SECRET"));
-        try {
+
             return client.post()
                     .uri(tokenEndpoint)
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -36,9 +36,6 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-        } catch (Exception e) {
-            e.getMessage();
-        }
-        return "";
+
     }
 }
