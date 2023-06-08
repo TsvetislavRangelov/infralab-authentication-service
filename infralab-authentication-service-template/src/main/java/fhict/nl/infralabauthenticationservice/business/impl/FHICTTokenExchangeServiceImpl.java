@@ -27,14 +27,18 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
         params.add("redirect_uri", REDIRECT_URI);
         params.add("client_id", CLIENT_ID);
         params.add("client_secret", System.getenv("INFRALAB_CLIENT_SECRET"));
-
-        return client.post()
-                .uri(tokenEndpoint)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromFormData(params))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        try {
+            return client.post()
+                    .uri(tokenEndpoint)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromFormData(params))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return "";
     }
 }
