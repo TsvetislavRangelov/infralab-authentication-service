@@ -13,7 +13,7 @@ import javax.net.ssl.SSLException;
 @RestController
 @RequestMapping("/certificates")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://infralab.fontysict.nl")
+@CrossOrigin(origins = "*")
 
 public class CertificateController {
     private CertificateService certificateService;
