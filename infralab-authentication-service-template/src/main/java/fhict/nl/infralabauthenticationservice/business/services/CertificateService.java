@@ -10,9 +10,5 @@ import java.util.List;
 
 
 public interface CertificateService{
-       Certificate getCertificate (String name) throws SSLException, JSONException;
-       List<Certificate> test ();
-
-       //to be changed later, once relation are created.
        InfralabCertificate getCertForUser(String email);
 }
