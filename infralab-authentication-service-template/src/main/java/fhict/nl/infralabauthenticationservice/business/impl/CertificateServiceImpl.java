@@ -41,7 +41,9 @@ public class CertificateServiceImpl implements CertificateService{
 
     @Override
     public String getCertForUser (String email) {
+        System.out.println(email);
         Optional<UserEntity> optional =  userRepository.findById(email);
+
 
         // if no user, return nothing + show msg in front end
         if (optional.isEmpty()){
