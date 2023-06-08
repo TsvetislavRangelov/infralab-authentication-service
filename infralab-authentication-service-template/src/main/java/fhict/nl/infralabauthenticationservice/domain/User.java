@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User{
     private String email;
-    private String certid;
+    private String certificate_descr;
 }

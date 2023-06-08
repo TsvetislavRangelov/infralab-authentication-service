@@ -4,4 +4,6 @@ import fhict.nl.infralabauthenticationservice.persistence.entities.OpenVPNConfig
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OpenVPNConfigRepository extends JpaRepository<OpenVPNConfigEntity, String>{
+    OpenVPNConfigEntity findOpenVPNConfigEntityByDescr(String descr);
+
 }

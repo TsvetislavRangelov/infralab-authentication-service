@@ -3,10 +3,14 @@ package fhict.nl.infralabauthenticationservice.business.impl;
 import fhict.nl.infralabauthenticationservice.business.CertificateConverter;
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
-import fhict.nl.infralabauthenticationservice.domain.OpenVPNConfig;
+import fhict.nl.infralabauthenticationservice.domain.InfralabCertificate;
+import fhict.nl.infralabauthenticationservice.persistence.CARepository;
 import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
 import fhict.nl.infralabauthenticationservice.persistence.OpenVPNConfigRepository;
 import fhict.nl.infralabauthenticationservice.persistence.UserRepository;
+import fhict.nl.infralabauthenticationservice.persistence.entities.CAEntity;
+import fhict.nl.infralabauthenticationservice.persistence.entities.CertificateEntity;
+import fhict.nl.infralabauthenticationservice.persistence.entities.OpenVPNConfigEntity;
 import fhict.nl.infralabauthenticationservice.persistence.entities.UserEntity;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -20,7 +24,6 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
-
 import javax.net.ssl.SSLException;
 import java.util.List;
 import java.util.Optional;
@@ -30,29 +33,46 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService{
-    private final CertificateRepository repository;
+    private final CertificateRepository certificateRepository;
     private final UserRepository userRepository;
+    private final CARepository caRepository;
+    private final OpenVPNConfigRepository openVPNConfigRepository;
 
     @Override
     public List<Certificate> test () {
-        return repository.findAll().stream().map(CertificateConverter::convert)
+        return certificateRepository.findAll().stream().map(CertificateConverter::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public String getCertForUser (String email) {
+    public InfralabCertificate getCertForUser (String email) {
         System.out.println(email);
         Optional<UserEntity> optional =  userRepository.findById(email);
-
-
-        // if no user, return nothing + show msg in front end
         if (optional.isEmpty()){
-            return "no certificate for you";
+            // user not in db
+            return null;
         }
-        //if user is here, get the corresponding cert, however, currenly there are no relations in db
-        //so it cant happen
-        //return - convertedUserEntity.certificate
-        return "You should have a certificate";
+        if(optional.get().getCertificate_descr() == null || optional.get().getCertificate_descr() == ""){
+            return null;
+            //throw no certificate
+        }
+        CertificateEntity certificate = certificateRepository.findById(optional.get().getCertificate_descr()).get();
+        OpenVPNConfigEntity openVPNConfig = openVPNConfigRepository.findOpenVPNConfigEntityByDescr(optional.get().getCertificate_descr());
+        CAEntity ca = caRepository.findCAEntitiesByDescr(optional.get().getCertificate_descr());
+
+
+       return  InfralabCertificate.builder()
+                .ca_cert(ca.getCert())
+                .data_ciphers(openVPNConfig.getData_ciphers())
+                .data_ciphers_fallback(openVPNConfig.getData_ciphers_fallback())
+                .tls(openVPNConfig.getTls())
+                .digest(openVPNConfig.getDigest())
+                .dev_mode(openVPNConfig.getDev_mode())
+                .protocol(openVPNConfig.getProtocol())
+                .local_port(openVPNConfig.getLocalport())
+                .cert(certificate.getCert())
+                .prvkey(certificate.getPrvkey()).build();
+
     }
 
     //Web client that bypasses SSL verification
@@ -91,9 +111,6 @@ public class CertificateServiceImpl implements CertificateService{
 
         return result;
     }
-
-
-
 
     private Certificate filterCertificate (String name, JSONArray jsonArray) throws JSONException {
         //Filter the certificates by name

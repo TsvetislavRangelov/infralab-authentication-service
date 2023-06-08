@@ -1,6 +1,7 @@
 package fhict.nl.infralabauthenticationservice.business.services;
 
 import fhict.nl.infralabauthenticationservice.domain.Certificate;
+import fhict.nl.infralabauthenticationservice.domain.InfralabCertificate;
 import fhict.nl.infralabauthenticationservice.domain.OpenVPNConfig;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 
@@ -13,5 +14,5 @@ public interface CertificateService{
        List<Certificate> test ();
 
        //to be changed later, once relation are created.
-       String getCertForUser(String email);
+       InfralabCertificate getCertForUser(String email);
 }
