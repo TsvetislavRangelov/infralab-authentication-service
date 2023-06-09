@@ -1,4 +1,5 @@
 package fhict.nl.infralabauthenticationservice.business.impl;
+
 import fhict.nl.infralabauthenticationservice.business.exception.InvalidUserException;
 import fhict.nl.infralabauthenticationservice.business.services.CertificateService;
 import fhict.nl.infralabauthenticationservice.domain.InfralabCertificate;
@@ -6,12 +7,10 @@ import fhict.nl.infralabauthenticationservice.persistence.CARepository;
 import fhict.nl.infralabauthenticationservice.persistence.CertificateRepository;
 import fhict.nl.infralabauthenticationservice.persistence.OpenVPNConfigRepository;
 import fhict.nl.infralabauthenticationservice.persistence.UserRepository;
-import fhict.nl.infralabauthenticationservice.persistence.entities.CAEntity;
-import fhict.nl.infralabauthenticationservice.persistence.entities.CertificateEntity;
-import fhict.nl.infralabauthenticationservice.persistence.entities.OpenVPNConfigEntity;
 import fhict.nl.infralabauthenticationservice.persistence.entities.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
@@ -24,30 +23,35 @@ public class CertificateServiceImpl implements CertificateService{
 
     @Override
     public InfralabCertificate getCertForUser (String email) {
-        Optional<UserEntity> optionalUser =  userRepository.findById(email);
+        Optional<UserEntity> optionalUser = userRepository.findById(email);
 
-        if (optionalUser.isEmpty()){throw new InvalidUserException();}
+        if (optionalUser.isEmpty()) {
+            throw new InvalidUserException();
+        }
         UserEntity user = optionalUser.get();
+        System.out.println(user);
+        System.out.println(user.getVpnid());
 
-        if(user.getCertificate_descr() == null || user.getCertificate_descr() == ""){
+        if (user.getVpnid() == null) {
             return null;
         }
         //get data for infralab certificate
-        CertificateEntity certificate = certificateRepository.findById(user.getCertificate_descr()).get();
-        OpenVPNConfigEntity openVPNConfig = openVPNConfigRepository.findOpenVPNConfigEntityByDescr(user.getCertificate_descr());
-        CAEntity ca = caRepository.findCAEntitiesByDescr(user.getCertificate_descr());
+//        CertificateEntity certificate = certificateRepository.findById(user.getCertificate_descr()).get();
+//        OpenVPNConfigEntity openVPNConfig = openVPNConfigRepository.findOpenVPNConfigEntityByDescr(user.getCertificate_descr());
+//        CAEntity ca = caRepository.findCAEntitiesByDescr(user.getCertificate_descr());
 
-       return  InfralabCertificate.builder()
-                .ca_cert(ca.getCert())
-                .data_ciphers(openVPNConfig.getData_ciphers())
-                .data_ciphers_fallback(openVPNConfig.getData_ciphers_fallback())
-                .tls(openVPNConfig.getTls())
-                .digest(openVPNConfig.getDigest())
-                .dev_mode(openVPNConfig.getDev_mode())
-                .protocol(openVPNConfig.getProtocol())
-                .local_port(openVPNConfig.getLocalport())
-                .cert(certificate.getCert())
-                .prvkey(certificate.getPrvkey()).build();
+        return InfralabCertificate.builder()
+                .ca_cert(user.getVpnid().getCaref().getCert())
+                .data_ciphers(user.getVpnid().getData_ciphers())
+                .data_ciphers_fallback(user.getVpnid().getData_ciphers_fallback())
+                .tls(user.getVpnid().getTls())
+                .digest(user.getVpnid().getDigest())
+                .dev_mode(user.getVpnid().getDev_mode())
+                .protocol(user.getVpnid().getProtocol())
+                .local_port(user.getVpnid().getLocalport())
+                .cert(user.getVpnid().getCertref().getCert())
+                .prvkey(user.getVpnid().getCertref().getPrvkey())
+                .build();
     }
 }
 

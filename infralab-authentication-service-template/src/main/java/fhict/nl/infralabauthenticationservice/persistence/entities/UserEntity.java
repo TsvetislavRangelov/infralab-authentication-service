@@ -1,8 +1,6 @@
 package fhict.nl.infralabauthenticationservice.persistence.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +15,7 @@ import lombok.NoArgsConstructor;
 public class UserEntity{
     @Id
     private String email;
-    private String certificate_descr;
+    @JoinColumn
+    @OneToOne
+    private OpenVPNConfigEntity vpnid;
 }

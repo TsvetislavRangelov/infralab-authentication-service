@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User{
     private String email;
-    private String certificate_descr;
+    private String vpnid;
 }

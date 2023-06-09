@@ -25,6 +25,7 @@ public class CertificateController {
     @PostMapping
     public ResponseEntity<Object> getCertificateByStudentEmail(@RequestBody String email) {
         InfralabCertificate response = certificateService.getCertForUser(email);
+        System.out.println(response);
         return ResponseEntity.ok().body(response);
     }
 
