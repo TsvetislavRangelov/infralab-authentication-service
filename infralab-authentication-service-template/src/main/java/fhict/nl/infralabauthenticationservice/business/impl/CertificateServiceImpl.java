@@ -21,6 +21,9 @@ public class CertificateServiceImpl implements CertificateService{
     @Override
     public InfralabCertificate getCertForUser (String email) {
         System.out.println(email);
+        email = email.replace("%40", "@");
+        email.substring(0,email.length()-1);
+        System.out.println(email);
         Optional<UserEntity> optionalUser = userRepository.findById(email);
         System.out.println(optionalUser);
 
