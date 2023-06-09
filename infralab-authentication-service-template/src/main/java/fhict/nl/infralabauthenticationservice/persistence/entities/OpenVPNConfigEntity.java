@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class OpenVPNConfigEntity{
     @Id
     private String vpnid;
-    private String descr;
+    private String description;
     @JoinColumn()
     @ManyToOne
     private CAEntity caref;
