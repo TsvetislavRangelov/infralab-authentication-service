@@ -17,10 +17,10 @@ public class OpenVPNConfigEntity{
     @Id
     private String vpnid;
     private String description;
-    @JoinColumn()
+    @JoinColumn(name="caref")
     @ManyToOne
     private CAEntity caref;
-    @JoinColumn()
+    @JoinColumn(name="certref")
     @ManyToOne
     private CertificateEntity certref;
     private String data_ciphers;

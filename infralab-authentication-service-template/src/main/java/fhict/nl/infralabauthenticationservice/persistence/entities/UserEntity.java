@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class UserEntity{
     @Id
     private String email;
-    @JoinColumn
+    @JoinColumn(name="vpnid")
     @OneToOne
     private OpenVPNConfigEntity vpnid;
 }
