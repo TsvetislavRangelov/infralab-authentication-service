@@ -16,10 +16,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class CertificateServiceImpl implements CertificateService{
-    private final CertificateRepository certificateRepository;
     private final UserRepository userRepository;
-    private final CARepository caRepository;
-    private final OpenVPNConfigRepository openVPNConfigRepository;
 
     @Override
     public InfralabCertificate getCertForUser (String email) {

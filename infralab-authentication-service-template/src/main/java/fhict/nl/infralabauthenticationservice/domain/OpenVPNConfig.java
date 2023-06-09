@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OpenVPNConfig{
     private String vpnid;
-    private String description;
+    private String descr;
     private String caref;
     private String certref;
     private String data_ciphers;
