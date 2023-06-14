@@ -29,8 +29,10 @@ public class CertificateServiceImpl implements CertificateService{
 
                return InfralabCertificate.builder()
                 .ca_cert(user.getVpnid().getCaref().getCert())
-                .data_ciphers(user.getVpnid().getData_ciphers().replace(",", ":"))
+                .data_ciphers(user.getVpnid().getData_ciphers().replace(",", ":")+":"+user.getVpnid()
+                        .getData_ciphers_fallback())
                 .data_ciphers_fallback(user.getVpnid().getData_ciphers_fallback())
+                       .name(user.getVpnid().getCertref().getDescr())
                 .tls(user.getVpnid().getTls())
                 .digest(user.getVpnid().getDigest())
                 .dev_mode(user.getVpnid().getDev_mode())
