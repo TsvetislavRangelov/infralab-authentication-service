@@ -32,14 +32,14 @@ public class CertificateServiceImpl implements CertificateService{
                 .data_ciphers(user.getVpnid().getData_ciphers().replace(",", ":")+":"+user.getVpnid()
                         .getData_ciphers_fallback())
                 .data_ciphers_fallback(user.getVpnid().getData_ciphers_fallback())
-                       .name(user.getVpnid().getCertref().getDescr())
+                       .name(user.getVpnid().getDescription().getDescr())
                 .tls(user.getVpnid().getTls())
                 .digest(user.getVpnid().getDigest())
                 .dev_mode(user.getVpnid().getDev_mode())
                 .protocol(user.getVpnid().getProtocol().toLowerCase())
                 .local_port(user.getVpnid().getLocalport())
-                .cert(user.getVpnid().getCertref().getCert())
-                .prvkey(user.getVpnid().getCertref().getPrvkey())
+                .cert(user.getVpnid().getDescription().getCert())
+                .prvkey(user.getVpnid().getDescription().getPrvkey())
                 .build();
     }
 }

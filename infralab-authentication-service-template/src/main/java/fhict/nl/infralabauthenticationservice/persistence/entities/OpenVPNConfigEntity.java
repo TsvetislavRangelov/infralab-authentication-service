@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 public class OpenVPNConfigEntity{
     @Id
     private String vpnid;
-    private String description;
+    @JoinColumn(name = "description")
+    @ManyToOne
+    private CertificateEntity description;
     @JoinColumn(name="caref")
     @ManyToOne
     private CAEntity caref;
-    @JoinColumn(name="certref")
-    @ManyToOne
-    private CertificateEntity certref;
+    private String certref;
     private String data_ciphers;
     private String tls;
     private String data_ciphers_fallback;
