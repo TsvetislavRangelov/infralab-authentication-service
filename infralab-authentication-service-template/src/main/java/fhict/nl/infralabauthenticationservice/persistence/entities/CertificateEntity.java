@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name ="certificates")
 public class CertificateEntity{
-    @Id
     private String refid;
+    @Id
     private String descr;
     private String type;
     private String cert;
