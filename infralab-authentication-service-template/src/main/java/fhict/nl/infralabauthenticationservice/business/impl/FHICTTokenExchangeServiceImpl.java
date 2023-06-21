@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @AllArgsConstructor
 public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
 
-    private static final String REDIRECT_URI = "https://localhost:8080/";
+    private static final String REDIRECT_URI = "https://infralab.fontysict.nl:8080";
     private static final String CLIENT_ID = "i476232-infralabau";
 
     @Override
@@ -28,13 +28,14 @@ public class FHICTTokenExchangeServiceImpl implements FHICTTokenExchangeService{
         params.add("client_id", CLIENT_ID);
         params.add("client_secret", System.getenv("INFRALAB_CLIENT_SECRET"));
 
-        return client.post()
-                .uri(tokenEndpoint)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromFormData(params))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+            return client.post()
+                    .uri(tokenEndpoint)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromFormData(params))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
     }
 }
